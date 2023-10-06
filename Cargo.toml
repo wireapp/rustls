@@ -17,3 +17,7 @@ default-members = [
 ]
 exclude = ["admin/rustfmt"]
 resolver = "2"
+
+[patch.crates-io.webpki]
+package = "rustls-webpki"
+path = "../webpki"

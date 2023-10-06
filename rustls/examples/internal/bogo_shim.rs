@@ -25,6 +25,7 @@ use std::io::{self, BufReader, Read, Write};
 use std::sync::Arc;
 use std::time;
 use std::{env, fs, net, process, thread};
+use fluvio_wasm_timer::SystemTime;
 
 static BOGO_NACK: i32 = 89;
 
@@ -392,8 +393,8 @@ fn align_time() {
      * this. gross!
      */
     fn sample() -> u64 {
-        time::SystemTime::now()
-            .duration_since(time::SystemTime::UNIX_EPOCH)
+        SystemTime::now()
+            .duration_since(SystemTime::UNIX_EPOCH)
             .unwrap()
             .as_secs()
     }
