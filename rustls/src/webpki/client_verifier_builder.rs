@@ -5,7 +5,6 @@ use pki_types::CertificateRevocationListDer;
 use webpki::BorrowedCertRevocationList;
 
 use super::verify::{AnonymousClientPolicy, WebPkiClientVerifier, WebPkiSupportedAlgorithms};
-use crate::verify::ClientCertVerifier;
 use crate::{CertRevocationListError, RootCertStore};
 
 /// A builder for configuring a `webpki` client certificate verifier.
@@ -78,7 +77,7 @@ impl ClientCertVerifierBuilder {
     /// 2. DER encoded CRLs have been provided that can not be parsed successfully.
     /// 3. No signature verification algorithms were set and the `ring` feature is not enabled.
     #[cfg_attr(not(feature = "ring"), allow(unused_mut))]
-    pub fn build(mut self) -> Result<Arc<dyn ClientCertVerifier>, ClientCertVerifierBuilderError> {
+    pub fn build(mut self) -> Result<Arc<WebPkiClientVerifier>, ClientCertVerifierBuilderError> {
         if self.roots.is_empty() {
             return Err(ClientCertVerifierBuilderError::NoRootAnchors);
         }

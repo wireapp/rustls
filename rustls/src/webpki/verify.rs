@@ -2,6 +2,8 @@ use alloc::sync::Arc;
 use core::fmt;
 
 use pki_types::{CertificateDer, SignatureVerificationAlgorithm, UnixTime};
+
+#[cfg(feature = "ring")]
 use webpki::ring as webpki_algs;
 
 use super::anchors::RootCertStore;
@@ -40,6 +42,7 @@ pub fn verify_server_cert_signed_by_trust_anchor(
             now,
             webpki::KeyUsage::server_auth(),
             None, // no CRLs
+            None,
         )
         .map_err(pki_error)
         .map(|_| ())
@@ -240,6 +243,7 @@ impl WebPkiServerVerifier {
 /// ```
 ///
 /// [^1]: <https://github.com/rustls/webpki>
+#[derive(Debug, Clone)]
 pub struct WebPkiClientVerifier {
     roots: Arc<RootCertStore>,
     subjects: Vec<DistinguishedName>,
@@ -346,6 +350,7 @@ impl ClientCertVerifier for WebPkiClientVerifier {
                 now,
                 webpki::KeyUsage::client_auth(),
                 revocation,
+                None,
             )
             .map_err(pki_error)
             .map(|_| ClientCertVerified::assertion())
@@ -580,7 +585,7 @@ fn verify_tls13(
 }
 
 /// wrapper around internal representation of a parsed certificate. This is used in order to avoid parsing twice when specifying custom verification
-pub struct ParsedCertificate<'a>(pub(crate) webpki::EndEntityCert<'a>);
+pub struct ParsedCertificate<'a>(pub webpki::EndEntityCert<'a>);
 
 impl<'a> TryFrom<&'a CertificateDer<'a>> for ParsedCertificate<'a> {
     type Error = Error;
