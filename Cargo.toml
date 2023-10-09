@@ -21,3 +21,7 @@ resolver = "2"
 [patch.crates-io.webpki]
 package = "rustls-webpki"
 path = "../webpki"
+
+[patch.crates-io.pki-types]
+package = "rustls-pki-types"
+path = "../pki-types"

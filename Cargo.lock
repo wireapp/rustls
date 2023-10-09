@@ -1107,8 +1107,9 @@ dependencies = [
 [[package]]
 name = "rustls-pki-types"
 version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a47003264dea418db67060fa420ad16d0d2f8f0a0360d825c00e177ac52cb5d8"
+dependencies = [
+ "fluvio-wasm-timer",
+]
 
 [[package]]
 name = "rustls-provider-example"
@@ -1134,7 +1135,6 @@ version = "0.102.0-alpha.4"
 dependencies = [
  "ring 0.17.0",
  "rustls-pki-types",
- "spki",
  "untrusted 0.9.0",
 ]
 

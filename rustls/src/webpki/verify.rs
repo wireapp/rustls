@@ -40,6 +40,7 @@ pub fn verify_server_cert_signed_by_trust_anchor(
             now,
             webpki::KeyUsage::server_auth(),
             None, // no CRLs
+            None,
         )
         .map_err(pki_error)
         .map(|_| ())
@@ -346,6 +347,7 @@ impl ClientCertVerifier for WebPkiClientVerifier {
                 now,
                 webpki::KeyUsage::client_auth(),
                 revocation,
+                None,
             )
             .map_err(pki_error)
             .map(|_| ClientCertVerified::assertion())
@@ -372,6 +374,8 @@ impl ClientCertVerifier for WebPkiClientVerifier {
     fn supported_verify_schemes(&self) -> Vec<SignatureScheme> {
         self.supported_algs.supported_schemes()
     }
+
+    fn as_any(&self) -> &dyn std::any::Any { self }
 }
 
 /// Controls how the [WebPkiClientVerifier] handles anonymous clients.
