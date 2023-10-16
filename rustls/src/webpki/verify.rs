@@ -2,6 +2,8 @@ use alloc::sync::Arc;
 use core::fmt;
 
 use pki_types::{CertificateDer, SignatureVerificationAlgorithm, UnixTime};
+
+#[cfg(feature = "ring")]
 use webpki::ring as webpki_algs;
 
 use super::anchors::RootCertStore;
@@ -241,12 +243,13 @@ impl WebPkiServerVerifier {
 /// ```
 ///
 /// [^1]: <https://github.com/rustls/webpki>
+#[derive(Debug, Clone)]
 pub struct WebPkiClientVerifier {
-    roots: Arc<RootCertStore>,
-    subjects: Vec<DistinguishedName>,
-    crls: Vec<webpki::OwnedCertRevocationList>,
-    anonymous_policy: AnonymousClientPolicy,
-    supported_algs: WebPkiSupportedAlgorithms,
+    pub roots: Arc<RootCertStore>,
+    pub subjects: Vec<DistinguishedName>,
+    pub crls: Vec<webpki::OwnedCertRevocationList>,
+    pub anonymous_policy: AnonymousClientPolicy,
+    pub supported_algs: WebPkiSupportedAlgorithms,
 }
 
 impl WebPkiClientVerifier {
@@ -374,8 +377,6 @@ impl ClientCertVerifier for WebPkiClientVerifier {
     fn supported_verify_schemes(&self) -> Vec<SignatureScheme> {
         self.supported_algs.supported_schemes()
     }
-
-    fn as_any(&self) -> &dyn std::any::Any { self }
 }
 
 /// Controls how the [WebPkiClientVerifier] handles anonymous clients.
@@ -584,7 +585,7 @@ fn verify_tls13(
 }
 
 /// wrapper around internal representation of a parsed certificate. This is used in order to avoid parsing twice when specifying custom verification
-pub struct ParsedCertificate<'a>(pub(crate) webpki::EndEntityCert<'a>);
+pub struct ParsedCertificate<'a>(pub webpki::EndEntityCert<'a>);
 
 impl<'a> TryFrom<&'a CertificateDer<'a>> for ParsedCertificate<'a> {
     type Error = Error;

@@ -238,9 +238,6 @@ pub trait ClientCertVerifier: Send + Sync {
     ///
     /// This should be in priority order, with the most preferred first.
     fn supported_verify_schemes(&self) -> Vec<SignatureScheme>;
-
-    /// Downcasting helper
-    fn as_any(&self) -> &dyn std::any::Any;
 }
 
 impl fmt::Debug for dyn ClientCertVerifier {
@@ -294,8 +291,6 @@ impl ClientCertVerifier for NoClientAuth {
     fn supported_verify_schemes(&self) -> Vec<SignatureScheme> {
         unimplemented!();
     }
-
-    fn as_any(&self) -> &dyn std::any::Any { self }
 }
 
 /// This type combines a [`SignatureScheme`] and a signature payload produced with that scheme.
